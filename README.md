@@ -1,47 +1,85 @@
-# JpaShop
+## 새롭게 배운 내용
 
-### 새롭게 배운 내용
+### 1. 연관관계 설정
 
-#### 1. 연관관계 설정
-   - 연관관계의 주인 
-   - 지연로딩
+- 연관관계의 주인
+
+    - 연관관계 편의 메소드
+
+- 지연로딩
+    - @XToOne 관계의 디폴트는 eager 로딩이므로 lazy로 바꾸어주어야 한다.
+    - 실무의 모든 연관관계는 지연로딩으로 설정해야 한다.
 
 
 
-#### 2. 변경 감지와 병합 (merge)
-   - 준영속엔티티
-      - JPA가 관리하지 않음
+### 2. 변경 감지와 병합 (merge)
 
-   - 수정 방법
-      1. 변경 감지 기능
-        - 레포지토리에 저장하지 않아도 영속성 컨텍스트에 의해 변경이 감지되고 저장됨
-      ```java
-      @Transactional
-     void update(Item itemParam){ // itemParam: 준영속 상태
-     Item findItem = em.find(Item.class, itemParam.getId()); // 같은 엔티티 조회
-     findItem.setPrice(itemParam.getPrice()); // 데이터 수정
-     // itemRepository.save(findItem); 
-     }
-      ```         
+- 준영속엔티티
 
-      2. merge 사용
-          - 준영속 상태를 영속 상태로 바꿀 때 사용
-           - 아래 코드에서 item은 준영속 상태
-           - 머지 적용한 merge는 영속성으로 관리됨
-           - 따라서 다시 변경/사용 시 merge를 사용해야 관리됨
-          ```java
-         Item merge = em.merge(item);
-         ```
+    - JPA가 관리하지 않음
 
-     주의할 점: 변경감지를 사용하면 원하는 속성만 변경할 수 있지만, 
-     병합을 사용하면 모든 속성이 변경된다. 
-     병합시 값이 없으면 null로 업데이트 될 위험이 있다. 
+- 준영속엔티티 수정 방법
 
-#### 3. Controller에서 Entity를 넘기지 말 것
+    1. 변경 감지 기능
 
-     Entity 변경시에 API의 스펙이 변경될 수 있다. 
-     Entity를 깨끗하게 유지하지 못할 수 있다. 
-     노출되면 안되는 컬럼이 노출될 수 있다. 
-     DTO를 만들어 전달하자.
-     Controller에서 어설프게 Entity를 생성하지 말자.
+    - 레포지토리에 저장하지 않아도 영속성 컨텍스트에 의해 변경이 감지되고 저장됨
 
+  ```java
+  @Transactional
+  void update(Item itemParam){ // itemParam: 준영속 상태
+  Item findItem = em.find(Item.class, itemParam.getId()); // 같은 엔티티 조회
+  findItem.setPrice(itemParam.getPrice()); // 데이터 수정
+  // itemRepository.save(findItem); 
+  }
+  ```
+
+    2. merge 사용
+
+        - 준영속 상태를 영속 상태로 바꿀 때 사용
+        - 아래 코드에서 item은 준영속 상태
+        - 머지 적용한 merge는 영속성으로 관리됨
+        - 따라서 다시 변경/사용 시 merge를 사용해야 관리됨
+
+       ```java
+       Item merge = em.merge(item);
+       ```
+
+    - 주의할 점
+
+      변경감지를 사용하면 원하는 속성만 변경할 수 있지만, 병합을 사용하면 모든 속성이 변경된다. 병합시 값이 없으면 null로 업데이트 될 위험이 있다.
+
+### 3. Controller에서 Entity를 그대로 넘기지 말 것
+
+- Entity 변경시에 API의 스펙이 변경될 수 있다.
+- Entity를 깨끗하게 유지하지 못할 수 있다. (각 api에 따라 validation이 다를 경우 등)
+- 노출되면 안되는 컬럼이 노출될 수 있다.
+- DTO를 만들어 전달하자.
+- Controller에서 어설프게 Entity를 생성하지 말자.
+
+### 4. 라이브러리 살펴보기
+
+- 핵심 라이브러리
+    - 스프링 MVC
+    - 스프링 ORM
+    - JPA, 하이버네이트
+    - 스프링 데이터 JPA
+
+- 기타
+    - H2 데이터베이스 클라이언트
+    - 커넥션 풀: HikariCP(변경 가능)
+    - thymeleaf
+    - slf4j
+    - junit5
+
+### 5. 가급적 Setter를 사용하지 말자.
+
+### 6. 도메인 모델 패턴과 트랜잭션 스크립트 패턴
+
+- 도메인 모델 패턴
+    - 객체 지향 분석 설계에 기반해 구현하고자하는 도메인 모델을 생성하는 패턴이다. domain에서 비즈니스 로직을 가지고 객체 지향 특성을 활용한다.
+      재사용성, 확장성, 유지보수성이 좋다. 반면, 객체를 판별하고 객체들 간의 관계를 정립하는 비용이 든다.
+
+- 트랜잭션 스크립트 패턴
+    - 하나의 로직을 단일 함수 또는 단일 스크립트에서 처리하는 구조이다.
+      이의 장점은 구현이 쉽다는 것이다. 하지만 비즈니스 로직이 복잡해질수록 난잡한 코드가 될 수 있고 도메인에 대한 분석과 설계가 약하기 때문에 코드의 중복이 빈번할 수 있다.
+      그러나 모듈화를 잘 하면 트랜잭션 스크립트로 높은 효율을 낼 수 있다. 
