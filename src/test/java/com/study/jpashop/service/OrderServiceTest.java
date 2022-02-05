@@ -1,13 +1,14 @@
 package com.study.jpashop.service;
 
-import com.study.jpashop.domain.Address;
-import com.study.jpashop.domain.Member;
-import com.study.jpashop.domain.Order;
-import com.study.jpashop.domain.OrderStatus;
-import com.study.jpashop.domain.item.Book;
-import com.study.jpashop.domain.item.Item;
+import com.study.jpashop.member.domain.Address;
+import com.study.jpashop.member.domain.Member;
+import com.study.jpashop.order.domain.Order;
+import com.study.jpashop.order.domain.OrderStatus;
+import com.study.jpashop.item.domain.Book;
+import com.study.jpashop.item.domain.Item;
 import com.study.jpashop.exception.NotEnoughStockException;
-import com.study.jpashop.repository.OrderRepository;
+import com.study.jpashop.order.service.OrderService;
+import com.study.jpashop.order.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,8 @@
 package com.study.jpashop.service;
 
-import com.study.jpashop.domain.Member;
-import com.study.jpashop.repository.MemberRepository;
+import com.study.jpashop.member.domain.Member;
+import com.study.jpashop.member.repository.MemberRepository;
+import com.study.jpashop.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
