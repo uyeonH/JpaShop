@@ -8,8 +8,8 @@ import com.study.jpashop.domain.item.Item;
 import com.study.jpashop.repository.ItemRepository;
 import com.study.jpashop.repository.MemberRepository;
 import com.study.jpashop.repository.OrderRepository;
+import com.study.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +43,7 @@ public class OrderService {
 
         //주문 생성
         Order order = Order.createOrder(member, delivery, orderItem);
-
         orderRepository.save(order);
-
         return order.getId();
     }
 
@@ -61,7 +59,7 @@ public class OrderService {
     /**
      * 검색
      */
-//    public List<Order> findOrders(ORderSearch oRderSearch) {
-//        return orderRepository.findAll(oRderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByCriteria(orderSearch);
+    }
 }
