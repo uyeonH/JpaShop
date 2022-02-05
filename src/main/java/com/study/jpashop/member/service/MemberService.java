@@ -17,7 +17,7 @@ public class MemberService {
 
     /**
      * 회원 가입
-      */
+     */
     @Transactional // 쓰기
     public Long join(Member member) {
         validateDuplicateMember(member);
@@ -33,12 +33,17 @@ public class MemberService {
         }
     }
 
-    public List<Member> findMembers(){
+    public List<Member> findMembers() {
         return memberRepository.findAll();
     }
 
-    public Member findOne(Long memberId){
-        return memberRepository.findTopById(memberId);
+    public Member findOne(Long memberId) {
+        return memberRepository.findById(memberId).get();
     }
 
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findById(id).get();
+        member.setName(name);
+    }
 }
