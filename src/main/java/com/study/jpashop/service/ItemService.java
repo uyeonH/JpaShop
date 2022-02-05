@@ -1,14 +1,11 @@
 package com.study.jpashop.service;
 
-import com.study.jpashop.domain.*;
 import com.study.jpashop.domain.item.Item;
 import com.study.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,7 +22,7 @@ public class ItemService {
 
     @Transactional
     public  void updateItem(Long itemId, String name, int price, int stockQuantity){
-        Item findItem = itemRepository.findOne(itemId);
+        Item findItem = itemRepository.findTopById(itemId);
         findItem.setName(name);
         findItem.setPrice(price);
         findItem.setStockQuantity(stockQuantity);
@@ -37,7 +34,7 @@ public class ItemService {
     }
 
     public Item findOne(Long itemId){
-        return itemRepository.findOne(itemId);
+        return itemRepository.findTopById(itemId);
     }
 
 
