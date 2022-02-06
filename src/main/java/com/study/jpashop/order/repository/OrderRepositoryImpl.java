@@ -5,12 +5,15 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.jpashop.order.domain.Order;
 import com.study.jpashop.order.domain.OrderStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.study.jpashop.delivery.domain.QDelivery.delivery;
+import static com.study.jpashop.member.domain.QMember.*;
 import static com.study.jpashop.order.domain.QOrder.order;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 import static org.springframework.util.StringUtils.hasText;
@@ -18,6 +21,9 @@ import static org.springframework.util.StringUtils.hasText;
 public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Autowired
+    EntityManager em;
 
     public OrderRepositoryImpl(EntityManager em) {
         queryFactory = new JPAQueryFactory(em);
@@ -63,4 +69,30 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 );
         return getPage(content, pageable, countQuery::fetchCount);
     }
+
+    @Override
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
+
+    @Override
+    public List<Order> findAllWithMemberDeliveryQueryDsl() {
+
+        List<Order> result = queryFactory.select(order)
+                .from(order)
+                .leftJoin(order.member, member)
+                .fetchJoin()
+                .leftJoin(order.delivery, delivery)
+                .fetchJoin()
+                .where()
+                .fetch();
+        return result;
+    }
+
+
+
 }

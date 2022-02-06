@@ -36,7 +36,7 @@ public class Order {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
-    private LocalDateTime orderDate; // 주문 시간간
+    private LocalDateTime orderDate; // 주문 시간
     private OrderStatus status; // [ORDER, CANCEL]
 
     //==연관관계 메서드==//
