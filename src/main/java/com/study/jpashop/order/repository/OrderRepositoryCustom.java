@@ -13,6 +13,7 @@ public interface OrderRepositoryCustom {
     List<Order> findAllWithMemberDelivery();
 
     List<Order> findAllWithMemberDeliveryQueryDsl();
+    List<Order> findAllWithItem();
 
-
+    List<Order> findAllWithMemberDelivery(int offset, int limit);
 }
