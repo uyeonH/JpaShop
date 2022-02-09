@@ -4,6 +4,8 @@ import com.study.jpashop.member.domain.Address;
 import com.study.jpashop.order.domain.Order;
 import com.study.jpashop.order.domain.OrderItem;
 import com.study.jpashop.order.domain.OrderStatus;
+import com.study.jpashop.order.dto.OrderFlatDto;
+import com.study.jpashop.order.dto.OrderItemQueryDto;
 import com.study.jpashop.order.dto.OrderQueryDto;
 import com.study.jpashop.order.repository.OrderRepository;
 import com.study.jpashop.order.repository.OrderSearch;
@@ -57,8 +59,8 @@ public class OrderApiController {
     }
 
     @GetMapping("/api/v3.1/orders")
-    public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
-                                        @RequestParam(value = "limit", defaultValue = "100") int limit) {
+    public List<OrderDto> ordersV3Page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                       @RequestParam(value = "limit", defaultValue = "100") int limit) {
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
         List<OrderDto> collect = orders.stream()
                 .map(o -> new OrderDto(o))
@@ -69,9 +71,27 @@ public class OrderApiController {
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
-
     }
 
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDtoOptimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDtoFlat();
+        return flats.stream()
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+                        e.getKey().getAddress(), e.getValue()))
+                .collect(toList());
+    }
 
     @Data
     static class OrderDto {
